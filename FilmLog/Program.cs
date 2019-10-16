@@ -59,9 +59,7 @@ namespace FilmLog
 
             if (diary.Length != 0)
             {
-                int sizeRecent = Math.Min(diary.Length, 5);
-                string[] diaryRecent = new string[sizeRecent];
-                Array.Copy(diary, diaryRecent, sizeRecent);
+                string[] diaryRecent = ReadRecentFromDiary();
                 Console.WriteLine("Recent adds to your film dairy: " + string.Join(", ", diaryRecent));
             } else
             {
@@ -70,9 +68,7 @@ namespace FilmLog
             
             if (watchlist.Length != 0)
             {
-                int sizeRecent = Math.Min(watchlist.Length, 5);
-                string[] watchlistRecent = new string[sizeRecent];
-                Array.Copy(watchlist, watchlistRecent, sizeRecent);
+                string[] diaryRecent = ReadRecentFromWatchlist();
                 Console.WriteLine("Recent adds to your watchlist: " + string.Join(", ", watchlist));
             } else
             {
@@ -100,7 +96,8 @@ namespace FilmLog
                     Console.WriteLine("Please add a film to your diary.");
                     UpdateDiary();
                     diary = ReadDiary();
-                    Console.WriteLine("Your latest watched films: " + string.Join(", ", diary));
+                    string[] diaryRecent = ReadRecentFromDiary();
+                    Console.WriteLine("Recent adds to your film dairy: " + string.Join(", ", diaryRecent));
                 }
                 else if (mode == "3")
                 {
@@ -111,7 +108,8 @@ namespace FilmLog
                     Console.WriteLine("Please add a film to your watchlist.");
                     UpdateWatchlist();
                     watchlist = ReadWatchlist();
-                    Console.WriteLine("Films you want to watch: " + string.Join(", ", watchlist));
+                    string[] diaryRecent = ReadRecentFromWatchlist();
+                    Console.WriteLine("Recent adds to your watchlist: " + string.Join(", ", watchlist));
                 }
                 else if (mode == "5")
                 {
@@ -217,6 +215,28 @@ namespace FilmLog
                 Array.Reverse(list);
             }
             return list;
+        }
+
+        static string[] ReadAmountFromList(string path, int amount)
+        {
+            string[] list = ReadList(path);
+            string[] subList = new string[amount];
+            Array.Copy(list, subList, amount);
+            return subList;
+        }
+
+        static string[] ReadRecentFromDiary()
+        {
+            int sizeRecent = Math.Min(diary.Length, 5);
+            string[] diaryRecent = ReadAmountFromList(diaryPath, sizeRecent);
+            return diaryRecent;
+        }
+
+        static string[] ReadRecentFromWatchlist()
+        {
+            int sizeRecent = Math.Min(watchlist.Length, 5);
+            string[] watchlistRecent = ReadAmountFromList(watchlistPath, sizeRecent);
+            return watchlistRecent;
         }
 
         static string[] ReadDiary()
