@@ -14,7 +14,8 @@ namespace FilmLog
         static readonly string diaryPath = root + @"\Diary.txt";
         static readonly string watchlistPath = root + @"\Watchlist.txt";
 
-        static string[] paths = new string[4] { profilePath, favouritesPath, diaryPath, watchlistPath };
+        static string[] paths = new string[4] { profilePath, favouritesPath,
+            diaryPath, watchlistPath };
 
         static readonly int profileLength = 1;
 
@@ -61,12 +62,14 @@ namespace FilmLog
                 favourites = ReadFile(favouritesPath);
             }
 
-            Console.WriteLine("Your favourite films are: \n" + string.Join(", ", favourites));
+            Console.WriteLine("Your favourite films are: \n" + 
+                string.Join(", ", favourites));
 
             if (diary.Length != 0)
             {
                 string[] diaryRecent = ReadRecentFromDiary();
-                Console.WriteLine("Recent adds to your film dairy: " + string.Join(", ", diaryRecent));
+                Console.WriteLine("Recent adds to your film dairy: " + 
+                    string.Join(", ", diaryRecent));
             } else
             {
                 Console.WriteLine("Your film diary is empty.");
@@ -75,7 +78,8 @@ namespace FilmLog
             if (watchlist.Length != 0)
             {
                 string[] diaryRecent = ReadRecentFromWatchlist();
-                Console.WriteLine("Recent adds to your watchlist: " + string.Join(", ", watchlist));
+                Console.WriteLine("Recent adds to your watchlist: " + 
+                    string.Join(", ", watchlist));
             } else
             {
                 Console.WriteLine("Your watchlist is empty.");
@@ -86,12 +90,14 @@ namespace FilmLog
 
             while(appLoop)
             {
-                Console.WriteLine("What would you like to do? (enter the number next to the action): ");
+                Console.WriteLine("What would you like to do? (enter the " +
+                    "number next to the action): ");
                 Console.WriteLine("1. View film diary.");
                 Console.WriteLine("2. Add a film to your diary.");
                 Console.WriteLine("3. View watchlist.");
                 Console.WriteLine("4. Add a film to your watchlist.");
-                Console.WriteLine("5. Exit app.");
+                Console.WriteLine("5. Reset user data.");
+                Console.WriteLine("6. Exit app.");
                 string mode = Console.ReadLine();
                 if (mode == "1")
                 {
@@ -103,7 +109,8 @@ namespace FilmLog
                     UpdateFile(diaryPath, diaryEntreeSize);
                     diary = ReadList(diaryPath);
                     string[] diaryRecent = ReadRecentFromDiary();
-                    Console.WriteLine("Recent adds to your film dairy: " + string.Join(", ", diaryRecent));
+                    Console.WriteLine("Recent adds to your film dairy: " + 
+                        string.Join(", ", diaryRecent));
                 }
                 else if (mode == "3")
                 {
@@ -115,19 +122,40 @@ namespace FilmLog
                     UpdateFile(watchlistPath, watchlistEntreeSize);
                     watchlist = ReadList(watchlistPath);
                     string[] diaryRecent = ReadRecentFromWatchlist();
-                    Console.WriteLine("Recent adds to your watchlist: " + string.Join(", ", watchlist));
+                    Console.WriteLine("Recent adds to your watchlist: " + 
+                        string.Join(", ", watchlist));
                 }
-                else if (mode == "5")
+                else if(mode == "5")
+                {
+                    Console.WriteLine("This will clears and resets all user " +
+                        "data (profile, favourites, diary, watchlist). Are " +
+                        "you sure you want to do this? (Y/N)");
+                    string choice = Console.ReadLine().ToUpper();
+                    if (choice == "Y")
+                    {
+                        ClearFiles();
+                        break;
+                    } else
+                    {
+                        Console.WriteLine("You have chosen not to clear " +
+                            "your data");
+                    }
+                }
+                else if (mode == "6")
                 {
                     appLoop = false;
                 }
                 else
                 {
-                    Console.WriteLine("Whoops! That option is not valid. Please try again...");
+                    Console.WriteLine("Whoops! That option is not valid. " +
+                        "Please try again...");
                 }
             }  
         }
 
+        /// <summary>
+        /// Creates files from the app's paths array (if not already created).
+        /// </summary>
         static void CreateFiles()
         {
             for(int i = 0; i < paths.Length; i++)
@@ -138,6 +166,20 @@ namespace FilmLog
                     {
                         sw.Close();
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Overwrites files from the app's paths array.
+        /// </summary>
+        static void ClearFiles()
+        {
+            for (int i = 0; i < paths.Length; i++)
+            {
+                using (StreamWriter sw = File.CreateText(paths[i]))
+                {
+                    sw.Close();
                 }
             }
         }
