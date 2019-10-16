@@ -8,7 +8,7 @@ namespace FilmLog
     {
         // File paths
         static readonly string root = Environment.CurrentDirectory;
-        
+
         static readonly string profilePath = root + @"\UserProfile.txt";
         static readonly string favouritesPath = root + @"\Favourites.txt";
         static readonly string diaryPath = root + @"\Diary.txt";
@@ -18,10 +18,16 @@ namespace FilmLog
 
         static readonly int profileLength = 1;
 
-        // Initial Favs Size
-        static readonly int favsSize = 4;
+        // Limit on amount of entrees added at one time
+        static readonly int favouritesEntreeSize = 4;
+        static readonly int diaryEntreeSize = 1;
+        static readonly int watchlistEntreeSize = 1;
 
+        // Limit on length of "recently added" lists
+        static readonly int recentDiarySize = 5;
+        static readonly int recentWatchlistSize = 5;
 
+        // App data
         static string profile = "";
         static string[] favourites = null;
         static string[] diary = null;
@@ -35,15 +41,15 @@ namespace FilmLog
             CreateFiles();
 
             profile = ReadProfile();
-            favourites = ReadFavourites();
-            diary = ReadDiary();
-            watchlist = ReadWatchlist();
+            favourites = ReadFile(favouritesPath);
+            diary = ReadList(diaryPath);
+            watchlist = ReadList(watchlistPath);
             
             Console.WriteLine("Welcome to Film Log.");
             if (profile == "")
             {
                 Console.WriteLine("Please enter your name.");
-                UpdateProfile();
+                UpdateFile(profilePath, profileLength);
                 profile = ReadProfile();
             }
             
@@ -51,8 +57,8 @@ namespace FilmLog
             if (favourites.Length == 0)
             {
                 Console.WriteLine("Please enter your favourite films.");
-                UpdateFavourites();
-                favourites = ReadFavourites();
+                UpdateFile(favouritesPath, favouritesEntreeSize);
+                favourites = ReadFile(favouritesPath);
             }
 
             Console.WriteLine("Your favourite films are: \n" + string.Join(", ", favourites));
@@ -94,8 +100,8 @@ namespace FilmLog
                 else if (mode == "2")
                 {
                     Console.WriteLine("Please add a film to your diary.");
-                    UpdateDiary();
-                    diary = ReadDiary();
+                    UpdateFile(diaryPath, diaryEntreeSize);
+                    diary = ReadList(diaryPath);
                     string[] diaryRecent = ReadRecentFromDiary();
                     Console.WriteLine("Recent adds to your film dairy: " + string.Join(", ", diaryRecent));
                 }
@@ -106,8 +112,8 @@ namespace FilmLog
                 else if (mode == "4")
                 {
                     Console.WriteLine("Please add a film to your watchlist.");
-                    UpdateWatchlist();
-                    watchlist = ReadWatchlist();
+                    UpdateFile(watchlistPath, watchlistEntreeSize);
+                    watchlist = ReadList(watchlistPath);
                     string[] diaryRecent = ReadRecentFromWatchlist();
                     Console.WriteLine("Recent adds to your watchlist: " + string.Join(", ", watchlist));
                 }
@@ -136,9 +142,12 @@ namespace FilmLog
             }
         }
 
+        /// <summary>
+        /// Reads a text file and returns contents in string array.
+        /// </summary>
+        /// <param name="path">Path of the file to be read.</param>
         static string[] ReadFile(string path)
         {
-
             int entrees = GetSizeOfEntrees(path);
             string[] contents = new string[entrees];
 
@@ -153,11 +162,16 @@ namespace FilmLog
             return contents;
         }
 
-        static void UpdateFile(string path, int contentLength)
+        /// <summary>
+        /// Updates a text file using input from the console.
+        /// </summary>
+        /// <param name="path">Path of the file to be updated.</param>
+        /// <param name="entreesAmount">Amount of entrees to be entered.</param>
+        static void UpdateFile(string path, int entreesAmount)
         {
             using (StreamWriter sw = File.AppendText(path))
             {
-                for (int i = 0; i < contentLength; i++)
+                for (int i = 0; i < entreesAmount; i++)
                 {
                     sw.WriteLine(Console.ReadLine());
                 }
@@ -165,6 +179,10 @@ namespace FilmLog
             }
         }
 
+        /// <summary>
+        /// Reads a text file and returns the amount of lines.
+        /// </summary>
+        /// <param name="path">Path of the file to be read.</param>
         private static int GetSizeOfEntrees(string path)
         {
             int size = 0;
@@ -179,6 +197,9 @@ namespace FilmLog
             return size;
         }
 
+        /// <summary>
+        /// Reads the profile file and returns the user's name.
+        /// </summary>
         static string ReadProfile()
         {
             string[] profile = ReadFile(profilePath);
@@ -191,22 +212,10 @@ namespace FilmLog
             return name;
         }
 
-        static void UpdateProfile()
-        {
-            UpdateFile(profilePath, profileLength);
-        }
-
-        static string[] ReadFavourites()
-        {
-            string[] favourites = ReadFile(favouritesPath);
-            return favourites;
-        }
-
-        static void UpdateFavourites()
-        {
-            UpdateFile(favouritesPath, favsSize);
-        }
-
+        /// <summary>
+        /// Reads a file and returns it as an array in reversed order.
+        /// </summary>
+        /// <param name="path">Path of file to be read</param>
         static string[] ReadList(string path)
         {
             string[] list = ReadFile(path);
@@ -217,6 +226,11 @@ namespace FilmLog
             return list;
         }
 
+        /// <summary>
+        /// Returns a certain amount of entrees from a list.
+        /// </summary>
+        /// <param name="path">Path of list.</param>
+        /// <param name="amount">Amount of entrees</param>
         static string[] ReadAmountFromList(string path, int amount)
         {
             string[] list = ReadList(path);
@@ -225,39 +239,24 @@ namespace FilmLog
             return subList;
         }
 
+        /// <summary>
+        /// Returns a certain amount of entrees from diary.
+        /// </summary>
         static string[] ReadRecentFromDiary()
         {
-            int sizeRecent = Math.Min(diary.Length, 5);
+            int sizeRecent = Math.Min(diary.Length, recentWatchlistSize);
             string[] diaryRecent = ReadAmountFromList(diaryPath, sizeRecent);
             return diaryRecent;
         }
 
+        /// <summary>
+        /// Returns a certain amount of entrees from watchlist.
+        /// </summary>
         static string[] ReadRecentFromWatchlist()
         {
-            int sizeRecent = Math.Min(watchlist.Length, 5);
+            int sizeRecent = Math.Min(watchlist.Length, recentDiarySize);
             string[] watchlistRecent = ReadAmountFromList(watchlistPath, sizeRecent);
             return watchlistRecent;
         }
-
-        static string[] ReadDiary()
-        {
-            return ReadList(diaryPath);
-        }
-
-        static void UpdateDiary()
-        {
-            UpdateFile(diaryPath, 1);
-        }
-
-        static string[] ReadWatchlist()
-        {
-            return ReadList(watchlistPath);
-        }
-
-        static void UpdateWatchlist()
-        {
-            UpdateFile(watchlistPath, 1);
-        }
-
     }
 }
