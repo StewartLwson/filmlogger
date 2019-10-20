@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{821D7352-54AD-4147-9FF9-E025A1C1E570}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>FilmLog</RootNamespace>
-    <AssemblyName>FilmLog</AssemblyName>
+    <ProjectGuid>{12AE76FC-A43C-42FB-8D7E-B019EB5BC239}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ConsoleClient</RootNamespace>
+    <AssemblyName>ConsoleClient</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,9 +31,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,19 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Diary.cs" />
-    <Compile Include="Models\DiaryEntree.cs" />
-    <Compile Include="Models\Entree.cs" />
-    <Compile Include="Models\Favourite.cs" />
-    <Compile Include="Models\Favourites.cs" />
-    <Compile Include="Models\Profile.cs" />
-    <Compile Include="Models\Watchlist.cs" />
-    <Compile Include="Models\WatchlistEntree.cs" />
-    <Compile Include="DataAccess.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FilmLog\FilmLog.csproj">
+      <Project>{821D7352-54AD-4147-9FF9-E025A1C1E570}</Project>
+      <Name>FilmLog</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
