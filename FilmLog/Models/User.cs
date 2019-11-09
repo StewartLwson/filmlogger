@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FilmLog.Models
 {
-    public class Profile
+    public class User
     {
         public string Name { get; set; }
     }

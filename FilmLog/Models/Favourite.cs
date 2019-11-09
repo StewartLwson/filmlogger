@@ -8,6 +8,6 @@ namespace FilmLog.Models
 {
     public class Favourite
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
     }
 }

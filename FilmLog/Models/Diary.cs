@@ -16,11 +16,11 @@ namespace FilmLog.Models
             string output = "";
             if (entrees.Count > 0)
             {
-                
+                entrees.Sort((x, y) => y.Date.CompareTo(x.Date));
                 DiaryEntree lastEntree = entrees.Last();
                 foreach (DiaryEntree entree in entrees)
                 {
-                    output += entree.Name;
+                    output += entree.Title;
                     if (entree != lastEntree)
                     {
                         output += ", ";
@@ -35,11 +35,12 @@ namespace FilmLog.Models
             string output = "";
             if (entrees.Count > 0)
             {
+                entrees.Sort((x, y) => y.Date.CompareTo(x.Date));
                 List<DiaryEntree> recentEntrees = entrees.GetRange(0, Math.Min(RecentEntreesCount, entrees.Count));
                 DiaryEntree lastEntree = recentEntrees.Last();
                 foreach (DiaryEntree entree in recentEntrees)
                 {
-                    output += entree.Name;
+                    output += entree.Title;
                     if (entree != lastEntree)
                     {
                         output += ", ";

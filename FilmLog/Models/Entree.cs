@@ -8,7 +8,7 @@ namespace FilmLog.Models
 {
     public class Entree
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
         public DateTime Date { get; set; }
     }
 }

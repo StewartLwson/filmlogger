@@ -17,7 +17,7 @@ namespace FilmLog.Models
                 Favourite lastFavourite = entrees.Last();
                 foreach (Favourite favourite in entrees)
                 {
-                    output += favourite.Name;
+                    output += favourite.Title;
                     if (favourite != lastFavourite)
                     {
                         output += ", ";

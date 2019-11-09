@@ -97,9 +97,9 @@ namespace FilmLog
         /// <summary>
         /// Reads the profile file and returns the users profile.
         /// </summary>
-        public static Profile ReadProfile()
+        public static User ReadProfile()
         {
-            Profile profile = new Profile();
+            User profile = new User();
             using (StreamReader sw = File.OpenText(profilePath))
             {
                 string name = sw.ReadLine();
@@ -120,7 +120,7 @@ namespace FilmLog
                 {
                     Favourite favourite = new Favourite
                     {
-                        Name = sw.ReadLine()
+                        Title = sw.ReadLine()
                     };
                     favourites.Add(favourite);
                 }
@@ -140,7 +140,7 @@ namespace FilmLog
                 {
                     DiaryEntree entree = new DiaryEntree
                     {
-                        Name = sw.ReadLine()
+                        Title = sw.ReadLine()
                     };
                     diary.Insert(0, entree);
                 }
@@ -159,7 +159,7 @@ namespace FilmLog
                 while(!sw.EndOfStream) { 
                     WatchlistEntree entree = new WatchlistEntree
                     {
-                        Name = sw.ReadLine()
+                        Title = sw.ReadLine()
                     };
                     watchlist.Insert(0, entree);
                 }
