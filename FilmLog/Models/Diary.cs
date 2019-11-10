@@ -20,10 +20,10 @@ namespace FilmLog.Models
                 DiaryEntree lastEntree = entrees.Last();
                 foreach (DiaryEntree entree in entrees)
                 {
-                    output += entree.Title;
+                    output += entree.Title + " (Watched: " + entree.Date.ToShortDateString() + ")";
                     if (entree != lastEntree)
                     {
-                        output += ", ";
+                        output += "\n";
                     }
                 }
             }
@@ -40,7 +40,7 @@ namespace FilmLog.Models
                 DiaryEntree lastEntree = recentEntrees.Last();
                 foreach (DiaryEntree entree in recentEntrees)
                 {
-                    output += entree.Title;
+                    output += entree.Title + " (Watched: " + entree.Date.ToShortDateString() + ")";
                     if (entree != lastEntree)
                     {
                         output += ", ";

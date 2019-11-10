@@ -18,7 +18,7 @@ namespace FilmLog
             string sql = "SELECT * FROM User WHERE Name=@Name";
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                var output = cnn.Query<User>(sql, new { Name = user.Name });
+                var output = cnn.Query<User>(sql, new { user.Name });
                 if (output.Count() == 0)
                 {
                     return null;
@@ -121,18 +121,42 @@ namespace FilmLog
             }
         }
 
-        public static void ClearProfile(User profile)
+        public static void ClearFavourites(User profile)
         {
-            string profileSql = "DELETE FROM User WHERE Name=@Name";
-            string favouritesSql = "DELETE FROM Favourites WHERE Username=@Name";
-            string diarySql = "DELETE FROM Diary WHERE Username=@Name";
-            string watchlistSql = "DELETE FROM Watchlist WHERE Username=@Name";
+            string sql = "DELETE FROM Favourites WHERE Username=@Name";
             using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
             {
-                cnn.Execute(profileSql, profile);
-                cnn.Execute(favouritesSql, profile);
-                cnn.Execute(diarySql, profile);
-                cnn.Execute(watchlistSql, profile);
+                cnn.Execute(sql, profile);
+            }
+        }
+
+        public static void ClearDiary(User profile)
+        {
+            string sql = "DELETE FROM Diary WHERE Username=@Name";
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute(sql, profile);
+            }
+        }
+
+        public static void ClearWatchlist(User profile)
+        {
+            string sql = "DELETE FROM Watchlist WHERE Username=@Name";
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute(sql, profile);
+            }
+        }
+
+        public static void ClearProfile(User profile)
+        {
+            string sql = "DELETE FROM User WHERE Name=@Name";
+            using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+            {
+                cnn.Execute(sql, profile);
+                ClearFavourites(profile);
+                ClearDiary(profile);
+                ClearWatchlist(profile);
             }
         }
 
