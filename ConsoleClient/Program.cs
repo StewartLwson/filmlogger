@@ -11,39 +11,48 @@ namespace ConsoleClient
     class Program
     {
         // App data
-        public static Profile profile = new Profile();
+        public static User user = new User();
         public static Favourites favourites = new Favourites();
         public static Diary diary = new Diary();
         public static Watchlist watchlist = new Watchlist();
 
         static void Main(string[] args)
         {
-            DataAccess.CreateFiles();
+            Console.WriteLine("Please enter your name.");
+            User newUser = new User();
+            newUser.Name = Console.ReadLine();
 
-            profile = DataAccess.ReadProfile();
-            favourites.entrees = DataAccess.ReadFavourites();
-            diary.entrees = DataAccess.ReadDiary();
-            watchlist.entrees = DataAccess.ReadWatchlist();
+            user = SqliteDataAccess.LoadProfile(newUser);
+            favourites = SqliteDataAccess.LoadFavourites(newUser);
+            diary = SqliteDataAccess.LoadDiary(newUser);
+            watchlist = SqliteDataAccess.LoadWatchlist(newUser);
 
             Console.WriteLine("Welcome to Film Log.");
-            if (profile.Name == null)
+            if (user == null)
             {
-                Console.WriteLine("Please enter your name.");
-                DataAccess.UpdateProfile();
-                profile = DataAccess.ReadProfile();
+                SqliteDataAccess.SaveProfile(newUser);
+                user = SqliteDataAccess.LoadProfile(newUser);
             }
 
-            Console.WriteLine("Welcome " + profile.Name);
-            if (favourites.entrees.Count == 0)
+            Console.WriteLine("Welcome " + user.Name);
+            if (favourites == null)
             {
                 Console.WriteLine("Please enter your favourite films.");
-                DataAccess.UpdateFavourites();
-                favourites.entrees = DataAccess.ReadFavourites();
+                Favourites fs = new Favourites();
+                for(int i = 0; i < 4; i++)
+                {
+                    Favourite f = new Favourite();
+                    f.Title = Console.ReadLine();
+                    fs.entrees.Add(f);
+                }
+                SqliteDataAccess.SaveFavourites(user, fs.entrees);
+                favourites = new Favourites();
+                favourites = SqliteDataAccess.LoadFavourites(user);
             }
 
             Console.WriteLine("Your favourite films are: " + favourites.ToString());
 
-            if (diary.entrees.Count > 0)
+            if (diary != null)
             {
                 Console.WriteLine("Recent adds to your diary: " +
                     diary.RecentEntreesToString());
@@ -53,7 +62,7 @@ namespace ConsoleClient
                 Console.WriteLine("Your film diary is empty.");
             }
 
-            if (watchlist.entrees.Count > 0)
+            if (watchlist != null)
             {
                 Console.WriteLine("Recent adds to your watchlist: " +
                     watchlist.RecentEntreesToString());
@@ -79,7 +88,7 @@ namespace ConsoleClient
                 string mode = Console.ReadLine();
                 if (mode == "1")
                 {
-                    if (diary.entrees.Count > 0)
+                    if (diary != null)
                     {
                         Console.WriteLine(string.Join("\n", diary));
                     } else
@@ -91,14 +100,20 @@ namespace ConsoleClient
                 else if (mode == "2")
                 {
                     Console.WriteLine("Please add a film to your diary.");
-                    DataAccess.UpdateDiary();
-                    diary.entrees = DataAccess.ReadDiary();
+                    DiaryEntree diaryEntree = new DiaryEntree();
+                    diaryEntree.Title = Console.ReadLine();
+                    Console.WriteLine("When did you watch this film? (dd/MM/yyyy)");
+                    diaryEntree.Date = DateTime.Parse(Console.ReadLine());
+                    List<DiaryEntree> entrees = new List<DiaryEntree>();
+                    entrees.Add(diaryEntree);
+                    SqliteDataAccess.SaveDiary(user, entrees);
+                    diary = SqliteDataAccess.LoadDiary(user);
                     Console.WriteLine("Recent adds to your diary: " +
                     diary.RecentEntreesToString());
                 }
                 else if (mode == "3")
                 {
-                    if (watchlist.entrees.Count > 0)
+                    if (watchlist != null)
                     {
                         Console.WriteLine(string.Join("\n", watchlist));
                     } else
@@ -110,10 +125,15 @@ namespace ConsoleClient
                 else if (mode == "4")
                 {
                     Console.WriteLine("Please add a film to your watchlist.");
-                    DataAccess.UpdateWatchlist();
-                    watchlist.entrees = DataAccess.ReadWatchlist();
+                    WatchlistEntree watchlistEntree = new WatchlistEntree();
+                    watchlistEntree.Title = Console.ReadLine();
+                    watchlistEntree.Date = DateTime.Now;
+                    List<WatchlistEntree> entrees = new List<WatchlistEntree>();
+                    entrees.Add(watchlistEntree);
+                    SqliteDataAccess.SaveWatchlist(user, entrees);
+                    watchlist = SqliteDataAccess.LoadWatchlist(user);
                     Console.WriteLine("Recent adds to your watchlist: " +
-                        watchlist.RecentEntreesToString());
+                    watchlist.RecentEntreesToString());
                 }
                 else if (mode == "5")
                 {
@@ -123,7 +143,7 @@ namespace ConsoleClient
                     string choice = Console.ReadLine().ToUpper();
                     if (choice == "Y")
                     {
-                        DataAccess.ClearFiles();
+                        SqliteDataAccess.ClearProfile(user);
                         break;
                     }
                     else
